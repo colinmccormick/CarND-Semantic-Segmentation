@@ -19,11 +19,11 @@ To try to improve this, I added data augmentation in the form of left-right imag
 
 6 epochs                           | 24 epochs                          | 24 epochs with augmentation        | Notes
 :----------------------------------:|:----------------------------------:|:----------------------------------:|:-------------------:
-![][examples/um_000000.png]         | ![][examples/um_000000_24.png]     | ![][examples/um_000000_24_aug.png] | Good performance
-![][examples/um_000010.png]         | ![][examples/um_000010_24.png]     | ![][examples/um_000000_24_aug.png] | Sidewalk confusion
-![][examples/um_000080.png]         | ![][examples/um_000080_24.png]     | ![][examples/um_000000_24_aug.png] | Shadow confusion
+![](examples/um_000000.png)         | ![](examples/um_000000_24.png)     | ![](examples/um_000000_24_aug.png) | Good performance
+![](examples/um_000010.png)         | ![](examples/um_000010_24.png)     | ![](examples/um_000000_24_aug.png) | Sidewalk confusion
+![](examples/um_000080.png)         | ![](examples/um_000080_24.png)     | ![](examples/um_000000_24_aug.png) | Shadow confusion
 
-![Loss from training][examples/loss_plot.png]
+![Loss from training](examples/loss_plot.png)
 Training loss: Red (original), Blue (with augmentation)
 
 
