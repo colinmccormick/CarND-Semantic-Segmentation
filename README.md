@@ -13,7 +13,7 @@ This architecture allows semantic information that is derived from the convoluti
 
 ### Results
 
-With hyperparameters [epochs,batch_size,keep_prob,learning_rate] = [12,5,0.5,0.001], the network successfully trains on the KITTI dataset (see below for sample images). Overall it's quite successful, although it struggles with some situations, such as shadows on the road. In most cases, increasing training epochs improves this, although not in all cases.
+With hyperparameters [epochs,batch_size,keep_prob,learning_rate] = [6, 5, 0.5, 0.001], the network successfully trains on the KITTI dataset (see below for sample images). Overall it's quite successful, although it struggles with some situations, such as shadows on the road. In most cases, increasing training epochs (to 24) improves this, although not in all cases.
 
 To try further improve the network's performance, I added data augmentation in the form of left-right image flips, using numpy's fliplr() function (added in get_batches_fn() in helper.py). For the same hyperparameters, this didn't significantly change the loss. Unfortunately, it appears to give worse performance for a handful of examples, notably the one involving lots of shadows on the road. 
 
