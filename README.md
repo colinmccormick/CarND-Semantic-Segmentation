@@ -29,7 +29,7 @@ The next step for improving the network accuracy is probably to train for more e
 
 Based on feedback from the project reviewers it's clear that I was implementing L2 regularization incorrectly in tensorflow. (It's necessary to manually add an additional term to the loss representing the L2 loss). Having done that, here's the modified training loss plot and sample images. It's clear that regularization improves the results, particularly when using a multiplier less than 1.0.
 
-![Loss from training](examples/loss_plot.png)
+![Loss from training](examples/loss_plot_L2.png)
 
 ABOVE: Training loss (black = strong L2 regularization, blue = weak L2 regularization)
 
@@ -37,9 +37,9 @@ Example images below. For all three categories, the hyperparameters are epochs,b
 
 | No regularization | Strong regularization | Weak regularization
 :----------------------------------:|:----------------------------------:|:----------------------------------: 
-![](examples/um_000000_24.png) | ![](examples/um_000000_24_L2_1.0.png) | ![](examples/um_000000_24_aug_L2_0.1.png) 
-![](examples/um_000010_24.png) | ![](examples/um_000010_24_L2_1.0.png) | ![](examples/um_000010_24_aug_L2_0.1.png) 
-![](examples/um_000070_24.png) | ![](examples/um_000070_24_L2_1.0.png) | ![](examples/um_000070_24_aug_L2_0.1.png) 
+![](examples/um_000000_24.png) | ![](examples/um_000000_24_aug_L2_1.0.png) | ![](examples/um_000000_24_aug_L2_0.1.png) 
+![](examples/um_000010_24.png) | ![](examples/um_000010_24_aug_L2_1.0.png) | ![](examples/um_000010_24_aug_L2_0.1.png) 
+![](examples/um_000070_24.png) | ![](examples/um_000070_24_aug_L2_1.0.png) | ![](examples/um_000070_24_aug_L2_0.1.png) 
 
 
 ### Setup Information
