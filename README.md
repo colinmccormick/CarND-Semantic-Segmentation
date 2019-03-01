@@ -19,16 +19,28 @@ To try further improve the network's performance, I added data augmentation in t
 
 The next step for improving the network accuracy is probably to train for more epochs, and then to investigate other data-augmentation methods such as noise addition and brightness variation.
 
-
 6 epochs                           | 24 epochs                          | 24 epochs with augmentation        | Notes
 :----------------------------------:|:----------------------------------:|:----------------------------------:|:-------------------:
 ![](examples/um_000000_06.png)         | ![](examples/um_000000_24.png)     | ![](examples/um_000000_24_aug.png) | Good performance
 ![](examples/um_000010_06.png)         | ![](examples/um_000010_24.png)     | ![](examples/um_000010_24_aug.png) | Sidewalk confusion
 ![](examples/um_000070_06.png)         | ![](examples/um_000070_24.png)     | ![](examples/um_000070_24_aug.png) | Shadow confusion
 
+### Update
+
+Based on feedback from the project reviewers it's clear that I was implementing L2 regularization incorrectly in tensorflow. (It's necessary to manually add an additional term to the loss representing the L2 loss). Having done that, here's the modified training loss plot and sample images. It's clear that regularization improves the results, particularly when using a multiplier less than 1.0.
+
 ![Loss from training](examples/loss_plot.png)
 
-ABOVE: Training loss (red = original, blue = data augmentation)
+ABOVE: Training loss (black = strong L2 regularization, blue = weak L2 regularization)
+
+Example images below. For all three categories, the hyperparameters are epochs,batch_size,keep_prob,learning_rate] = [24, 5, 0.5, 0.001]. Data augmentation (L/R flip) is used. For the left column, no regularization was used. In the middle column strong L2 regularization was used (multiplier = 1.0) and in the right column weak L2 regularization was used (multiplier = 0.1).
+
+| No regularization | Strong regularization | Weak regularization
+:----------------------------------:|:----------------------------------:|:----------------------------------: 
+![](examples/um_000000_24.png) | ![](examples/um_000000_24_L2_1.0.png) | ![](examples/um_000000_24_aug_L2_0.1.png) 
+![](examples/um_000010_24.png) | ![](examples/um_000010_24_L2_1.0.png) | ![](examples/um_000010_24_aug_L2_0.1.png) 
+![](examples/um_000070_24.png) | ![](examples/um_000070_24_L2_1.0.png) | ![](examples/um_000070_24_aug_L2_0.1.png) 
+
 
 ### Setup Information
 ##### GPU

@@ -46,28 +46,30 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     :param num_classes: Number of classes to classify
     :return: The Tensor for the last layer of output
     """
-    # do 1x1 convolution after final vgg layer
-    FCN08 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, padding='same', 
+    
+    with tf.variable_scope('FCN8'):
+        # do 1x1 convolution after final vgg layer
+        FCN08 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, padding='same', 
                     kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                     kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
-    # upsample layer (2x) and add skip connection
-    FCN09 = tf.layers.conv2d_transpose(FCN08, num_classes, 4, 2, padding='same',
+        # upsample layer (2x) and add skip connection
+        FCN09 = tf.layers.conv2d_transpose(FCN08, num_classes, 4, 2, padding='same',
                     kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                     kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
-    VGG_04_1x1 = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, padding='same',
+        VGG04_1x1 = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, padding='same',
                     kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                     kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
-    FCN09_skip = tf.add(FCN09, VGG_04_1x1)
-    # upsample layer (2x) and add skip connection
-    FCN10 = tf.layers.conv2d_transpose(FCN09_skip, num_classes, 4, 2, padding='same',
+        FCN09_skip = tf.add(FCN09, VGG04_1x1)
+        # upsample layer (2x) and add skip connection
+        FCN10 = tf.layers.conv2d_transpose(FCN09_skip, num_classes, 4, 2, padding='same',
                     kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                     kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
-    VGG_03_1x1 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, padding='same',
+        VGG03_1x1 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, padding='same',
                     kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                     kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
-    FCN10_skip = tf.add(FCN10, VGG_03_1x1)
-    # upsample layer (4x)
-    FCN11 = tf.layers.conv2d_transpose(FCN10_skip, num_classes, 16, 8, padding='same',
+        FCN10_skip = tf.add(FCN10, VGG03_1x1)
+        # upsample layer (4x)
+        FCN11 = tf.layers.conv2d_transpose(FCN10_skip, num_classes, 16, 8, padding='same',
                     kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                     kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     return FCN11
@@ -85,6 +87,9 @@ def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
     logits = tf.reshape(nn_last_layer, (-1, num_classes))
     correct_label = tf.reshape(correct_label, (-1, num_classes))
     cross_entropy_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits,labels=correct_label))
+    # add L2 regularization loss here
+    REGULARIZATION_MULTIPLIER = 0.1
+    cross_entropy_loss += REGULARIZATION_MULTIPLIER * tf.losses.get_regularization_loss()
     train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cross_entropy_loss)
     return logits, train_op, cross_entropy_loss
 tests.test_optimize(optimize)
@@ -105,6 +110,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param learning_rate: TF Placeholder for learning rate
     """
     sess.run(tf.global_variables_initializer())
+
     print("Training...\n")
     for epoch in range(epochs):
         print("Epoch {}...".format(epoch+1))
@@ -116,7 +122,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
                                     keep_prob:0.5,
                                     learning_rate:0.001})
             total_loss += loss
-        print("Loss = {:.3f}\n".format(total_loss))
+        print("Loss = {:.1f}\n".format(total_loss))
 tests.test_train_nn(train_nn)
 
 def run():
@@ -134,7 +140,6 @@ def run():
         # Create function to get batches
         get_batches_fn = helper.gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
         # OPTIONAL: Augment Images for better results
-        # augmentation operation carried out in helper.py
         # set hyper parameters
         epochs = 24
         batch_size = 5
